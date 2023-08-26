@@ -2,55 +2,55 @@
 #include "kernel/stat.h"
 #include "user/user.h"
 
-void printPrimes(int *input, int count) {
-    // termination
-    if (count == 0) {
-        return;
+void get_next_primes(int read_fd) {
+    int prime, cur_num;
+    int pp[2];
+
+    // print the first prime
+    if (read(read_fd, &prime, sizeof(int)) != 0) {
+        // if read succeeds
+        printf("prime %d\n", prime);
     }
-
-    int num; // to be read into later
-    int i = 0, prime = *input;
-    int p[2];
-    pipe(p);
-
-    printf("prime %d\n", prime);
-
-    if (fork() == 0) {
-        // child process: write into the next process
-        close(p[0]);
-        for (; i < count; i++) {
-            // write the input into the pipe
-            write(p[1], (int *)(input + i), sizeof(int));
-        }
-        close(p[1]);
-        exit(0);
-    } else {
-        // parent process: sieve the nums and send to the next stage
-        close(p[1]);
-        count = 0; // count of prime nums so far
-        // continue to read from the pipe || while p[1] is open
-        while (read(p[0], &num, sizeof(int)) != 0) {
-            if (num % prime != 0) {
-                // is prime
-                *input = num;
-                input++;
-                count++;
-            }
-        }
-        // INPUT pointer restored to the initial position
-        printPrimes(input - count, count); // (startingPosition, number of nums)
     
-        close(p[0]);
-        wait(0);
+    // if there's remaining num(s)
+    if (read(read_fd, &cur_num, sizeof(int)) != 0) {
+        pipe(pp);
+        if (fork() == 0) {
+            // child process
+            close(pp[0]);
+            // write the already read num into pipe if it's prime
+            if (cur_num % prime != 0) {
+                write(pp[1], &cur_num, sizeof(int));
+            }
+            // write the other primes (if any)
+            while (read(read_fd, &cur_num, sizeof(int)) != 0) {
+                if (cur_num % prime != 0) {
+                    write(pp[1], &cur_num, sizeof(int));
+                }
+            }
+            close(pp[1]);
+            exit(0);
+        } else {
+            // parent process
+            close(pp[1]);
+            wait(0);
+            get_next_primes(pp[0]);
+            exit(0);
+        }
     }
 }
 
 int main(int argc, char *argv[]) {
-    int input[34], i = 0;
-    // init the input array
-    for (; i < 34; i++) {
-        input[i] = i + 2;
+    int p[2];
+    pipe(p);
+    int i;
+
+    // write into the pipe sequentially
+    for (i = 2; i <= 35; i++) {
+        write(p[1], &i, sizeof(int));
     }
-    printPrimes(input, 34);
+    close(p[1]);
+
+    get_next_primes(p[0]);
     exit(0);
 }
