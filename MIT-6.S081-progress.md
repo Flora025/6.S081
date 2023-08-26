@@ -1,15 +1,24 @@
 # MIT 6.S081
 
-### 学习方式
+## SP Notes
+
+Each lab has its own branch in the repo.
+
+submit: 
+
+## Weekly Roadmap
 
 Prep -> Lec video&slides -> Lab
 
-### 进度记录
+
+
+## Progress
 
 - [x] 【0820】init repo && materials && setup
 - [x] 【0821】reading1+lec1
 
-
+- [x] 【0824】lab util
+- [ ] 【】prep2, lec2, lab syscall
 
 ### W1
 
