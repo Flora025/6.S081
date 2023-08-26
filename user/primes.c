@@ -2,61 +2,55 @@
 #include "kernel/stat.h"
 #include "user/user.h"
 
+void printPrimes(int *input, int count) {
+    // termination
+    if (count == 0) {
+        return;
+    }
 
-// read_fp: the file descriptor to read from
-void sieve(int prime, int read_fd) {
+    int num; // to be read into later
+    int i = 0, prime = *input;
+    int p[2];
+    pipe(p);
+
     printf("prime %d\n", prime);
 
-    int p[2];
-    int num; // to be read into later
-    pipe(p);
-
     if (fork() == 0) {
-        // child process: create a new process
-        close(p[1]); // only have to read, close the write end
-        // 下个进程会从p[0]的fd里读取【在parent中写进p[1]】的num
-        sieve(prime, p[0]); 
+        // child process: write into the next process
+        close(p[0]);
+        for (; i < count; i++) {
+            // write the input into the pipe
+            write(p[1], (int *)(input + i), sizeof(int));
+        }
+        close(p[1]);
         exit(0);
     } else {
-        // parent process: sieve primes and send them to the next process 
-        close(p[0]); // close read end
-
-        while (read(read_fd, &num, sizeof(int)) != 0) {
-            // i.e., the write end of the pipe is open || READ is successful
+        // parent process: sieve the nums and send to the next stage
+        close(p[1]);
+        count = 0; // count of prime nums so far
+        // continue to read from the pipe || while p[1] is open
+        while (read(p[0], &num, sizeof(int)) != 0) {
             if (num % prime != 0) {
-                // is prime, write to the next process
-                write(p[1], &num, sizeof(int));
+                // is prime
+                *input = num;
+                input++;
+                count++;
             }
         }
-
-        close(p[1]); // close write end
-        wait(0); // wait for the child process
-    }
-}
-
-void generate_primes(int start, int end) {
-    int p[2];
-    pipe(p);
-
-    if (fork() == 0) {
-        // child process: start the sieving process
-        close(p[1]);
-        sieve(2, p[0]);
-        exit(0);
-    } else {
-        // parent process: write all nums into the pipe sequentially
-        close(p[0]); // no need to read
-
-        for (int i = start; i <= end; i++) {
-            write(p[1], &i, sizeof(int));
-        }
-        close(p[1]);
-
+        // INPUT pointer restored to the initial position
+        printPrimes(input - count, count); // (startingPosition, number of nums)
+    
+        close(p[0]);
         wait(0);
     }
 }
 
 int main(int argc, char *argv[]) {
-    generate_primes(2, 35);
-    return 0;
+    int input[34], i = 0;
+    // init the input array
+    for (; i < 34; i++) {
+        input[i] = i + 2;
+    }
+    printPrimes(input, 34);
+    exit(0);
 }
