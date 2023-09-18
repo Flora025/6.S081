@@ -95,3 +95,17 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// runs an argument while tracing specified syscalls
+// enable tracing for the process that calls it 
+// and any children that it subsequently forks
+uint64
+sys_trace(void)
+{
+  // get the current process
+  if (argint(0, &(myproc()->tracemask)) < 0) {
+    return -1;
+  }; 
+  // should not call trace()
+  return 0;
+};

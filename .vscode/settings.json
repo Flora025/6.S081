@@ -6,6 +6,11 @@
         "stat.h": "c",
         "fs.h": "c",
         "types.h": "c",
-        "param.h": "c"
+        "param.h": "c",
+        "riscv.h": "c",
+        "proc.h": "c",
+        "memlayout.h": "c",
+        "spinlock.h": "c",
+        "defs.h": "c"
     }
 }
