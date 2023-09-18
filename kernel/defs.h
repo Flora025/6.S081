@@ -8,6 +8,12 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct sysinfo;
+
+// sysinfo.c
+int             systeminfo(uint64);
+int             freemem(void);
+int             nproc(void);
 
 // bio.c
 void            binit(void);

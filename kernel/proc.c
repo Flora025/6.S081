@@ -697,3 +697,21 @@ procdump(void)
   }
 }
 
+// Returns the number of processes
+int
+nproc(void)
+{
+  int count = 0;
+  struct proc *p;
+
+  for (p = proc; p < &proc[NPROC]; p++) {
+    // hold the lock
+    acquire(&p->lock);
+    if (p->state != UNUSED) {
+      count++;
+    }
+    release(&p->lock);
+  }
+
+  return count;
+}

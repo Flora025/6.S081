@@ -109,3 +109,15 @@ sys_trace(void)
   // should not call trace()
   return 0;
 };
+
+uint64
+sys_sysinfo(void)
+{
+  uint64 si; // sysinfo
+
+  if (argaddr(0, &si) < 0) {
+    return -1;
+  }
+
+  return systeminfo(si);
+}
