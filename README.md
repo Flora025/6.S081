@@ -2,9 +2,11 @@
 
 ## SP Notes
 
-Each lab has its own branch in the repo.
+Each lab has its own branch in the repo. Labs completed so far: 
 
-submit: 
+- [🔗Lab Util](https://github.com/Flora025/6.S081/tree/util)
+
+- [🔗Lab Syscall](https://github.com/Flora025/6.S081/tree/syscall)
 
 ## Weekly Roadmap
 
@@ -21,7 +23,7 @@ Prep -> Lec video&slides -> Lab
 
 - [x] 【0915】review concepts+labUtil, lec 3 prep + live
 
-- [x] 【0917】lab syscall,
+- [x] 【0917】lab syscall
 
 ### W2
 
