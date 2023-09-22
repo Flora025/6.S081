@@ -440,3 +440,44 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
     return -1;
   }
 }
+
+void
+printhelper(pagetable_t pagetable, int depth)
+{
+  // there are 2^9 = 512 PTEs in a page table.
+  for(int i = 0; i < 512; i++){
+    pte_t pte = pagetable[i];
+    // skip invalid pages
+    if (!(pte & PTE_V)) {
+      continue;
+    }
+
+    // print indentation
+    for (int i = 0; i <= depth; i++) {
+      printf("..");
+      if(i != depth) {
+        printf(" ");
+      }
+    }
+
+    // if (pte is valid)
+    if((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0){
+      // print pte
+      printf("%d: pte %p pa %p\n", i, pte, PTE2PA(pte));
+      // this PTE points to a lower-level page table.
+      uint64 child = PTE2PA(pte);
+      printhelper((pagetable_t)child, depth + 1);
+    } else if(pte & PTE_V){
+      // if it's a leaf page --> print without recursive call
+      printf("%d: pte %p pa %p\n", i, pte, PTE2PA(pte));
+    }
+  }
+}
+// print the content of a page table
+void
+vmprint(pagetable_t pagetable)
+{
+  // refer to freewalk()
+  printf("page table %p\n", pagetable);
+  printhelper(pagetable, 0);
+}
