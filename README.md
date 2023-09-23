@@ -8,6 +8,8 @@ Each lab has its own branch in the repo. Labs completed so far:
 
 - [🔗Lab Syscall](https://github.com/Flora025/6.S081/tree/syscall)
 
+- [🔗Lab Page tables](https://github.com/Flora025/6.S081/tree/pgtbl)
+
 ## Weekly Roadmap
 
 Prep -> Lec video&slides -> Lab
@@ -31,22 +33,14 @@ Prep -> Lec video&slides -> Lab
 
 Prep:
 
-- Chap3
+- xv6book Chap3
 - kernel/memlayout.h, kernel/vm.c, kernel/kalloc.c, kernel/riscv.h, and kernel/exec.c
 - Lec 3&4
 
-Lab pgtbl (Page tables):==具体实验报告见notes==
+Lab pgtbl (Page tables):
 
-- Print a page table
-  - simply following the hints will do
-  - vmprint() (or its helper func) is basically an implementation of preorder tree traversal (if done recursively)
-
-- A Kernal page table per process
-  - 需求是给每个process构建一个kernel page table。具体的实现方法是：
-    - 仿照kvminit函数中创建kernel page table的过程，在创建process也给p创建一个kpagetable，并保存在stuc proc中
-    - 维护每个process中kernel page table和kernel stack的mapping。需要注意的是，原本创建kernel stack是在`procinit()`中完成的，这里为了映射kpagetable和kstack，可以把创建功能移动到`allocproc()`中。
-
-- Simplify `copyin` and `copyout`
+- see [lab pgtbl notes](https://github.com/Flora025/6.S081/blob/main/notes/lab3-pgtbl.md)
+  
 
 ### W2
 
