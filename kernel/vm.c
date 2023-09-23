@@ -429,23 +429,7 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
 int
 copyin(pagetable_t pagetable, char *dst, uint64 srcva, uint64 len)
 {
-  uint64 n, va0, pa0;
-
-  while(len > 0){
-    va0 = PGROUNDDOWN(srcva);
-    pa0 = walkaddr(pagetable, va0);
-    if(pa0 == 0)
-      return -1;
-    n = PGSIZE - (srcva - va0);
-    if(n > len)
-      n = len;
-    memmove(dst, (void *)(pa0 + (srcva - va0)), n);
-
-    len -= n;
-    dst += n;
-    srcva = va0 + PGSIZE;
-  }
-  return 0;
+ return copyin_new(pagetable, dst, srcva, len);
 }
 
 // Copy a null-terminated string from user to kernel.
@@ -455,40 +439,7 @@ copyin(pagetable_t pagetable, char *dst, uint64 srcva, uint64 len)
 int
 copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
 {
-  uint64 n, va0, pa0;
-  int got_null = 0;
-
-  while(got_null == 0 && max > 0){
-    va0 = PGROUNDDOWN(srcva);
-    pa0 = walkaddr(pagetable, va0);
-    if(pa0 == 0)
-      return -1;
-    n = PGSIZE - (srcva - va0);
-    if(n > max)
-      n = max;
-
-    char *p = (char *) (pa0 + (srcva - va0));
-    while(n > 0){
-      if(*p == '\0'){
-        *dst = '\0';
-        got_null = 1;
-        break;
-      } else {
-        *dst = *p;
-      }
-      --n;
-      --max;
-      p++;
-      dst++;
-    }
-
-    srcva = va0 + PGSIZE;
-  }
-  if(got_null){
-    return 0;
-  } else {
-    return -1;
-  }
+  return copyinstr_new(pagetable, dst, srcva, max);
 }
 
 void
@@ -509,17 +460,12 @@ printhelper(pagetable_t pagetable, int depth)
         printf(" ");
       }
     }
-
+    printf("%d: pte %p pa %p\n", i, pte, PTE2PA(pte));
     // if (pte is valid)
-    if((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0){
-      // print pte
-      printf("%d: pte %p pa %p\n", i, pte, PTE2PA(pte));
+    if((pte & (PTE_R|PTE_W|PTE_X)) == 0){
       // this PTE points to a lower-level page table.
       uint64 child = PTE2PA(pte);
       printhelper((pagetable_t)child, depth + 1);
-    } else if(pte & PTE_V){
-      // if it's a leaf page --> print without recursive call
-      printf("%d: pte %p pa %p\n", i, pte, PTE2PA(pte));
     }
   }
 }
@@ -530,4 +476,38 @@ vmprint(pagetable_t pagetable)
   // refer to freewalk()
   printf("page table %p\n", pagetable);
   printhelper(pagetable, 0);
+}
+
+// copy uvm to kvm from START to END,
+// return 0 if successfull and -1 otherwise
+int
+uvm2kvm(pagetable_t upgtbl, pagetable_t kpgtbl, uint64 start, uint64 end)
+{
+  // pointers to user pte and kernel pte
+  // as walk() returns pointers
+  pte_t *upte, *kpte;
+
+  // exception: exceed plic limit
+  if(end < start || PGROUNDUP(end) >= PLIC)
+    return -1;
+
+  // walk through every pte
+  for(uint64 va = PGROUNDUP(start); va < end; va += PGSIZE){
+    // look up user pte
+    if ((upte = walk(upgtbl, va, 0)) == 0) {
+      panic("uvm2kvm: failed to find user pte");
+    }
+    // look up kernel pte
+    if ((kpte = walk(kpgtbl, va, 1)) == 0) {
+      panic("uvm2kvm: failed to create kernel pte");
+    }
+
+    // add mapping
+    // and cancelling user accessibility meanwhile
+    *kpte = *upte & (~PTE_U); // set the user flag to 0 (forbid user access)
+    
+  }
+
+  return 0;
+
 }

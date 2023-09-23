@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.ejs": "html",
+        "proc.h": "c",
+        "defs.h": "c",
+        "spinlock.h": "c"
+    }
+}
