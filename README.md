@@ -25,6 +25,29 @@ Prep -> Lec video&slides -> Lab
 
 - [x] 【0917】lab syscall
 
+- [x] 【0920+】prep3, lec4+5+6, lab pgtbl
+
+### W3
+
+Prep:
+
+- Chap3
+- kernel/memlayout.h, kernel/vm.c, kernel/kalloc.c, kernel/riscv.h, and kernel/exec.c
+- Lec 3&4
+
+Lab pgtbl (Page tables):==具体实验报告见notes==
+
+- Print a page table
+  - simply following the hints will do
+  - vmprint() (or its helper func) is basically an implementation of preorder tree traversal (if done recursively)
+
+- A Kernal page table per process
+  - 需求是给每个process构建一个kernel page table。具体的实现方法是：
+    - 仿照kvminit函数中创建kernel page table的过程，在创建process也给p创建一个kpagetable，并保存在stuc proc中
+    - 维护每个process中kernel page table和kernel stack的mapping。需要注意的是，原本创建kernel stack是在`procinit()`中完成的，这里为了映射kpagetable和kstack，可以把创建功能移动到`allocproc()`中。
+
+- Simplify `copyin` and `copyout`
+
 ### W2
 
 Prep：
@@ -96,4 +119,6 @@ Lab Util:
 
 About How to use GDB https://zhuanlan.zhihu.com/p/354794701
 
-- `make  qemu-gdb`
+- `make qemu-gdb`
+
+- in another window && same dir:`riscv64-unknown-elf-gdb`
