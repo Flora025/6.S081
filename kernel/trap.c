@@ -77,9 +77,20 @@ usertrap(void)
     exit(-1);
 
   // give up the CPU if this is a timer interrupt.
-  if(which_dev == 2)
-    yield();
+  if(which_dev == 2) {
+    p->numticks++;
+    if(p->interval > 0){
+      if( p->interval > 0 && p->numticks == p->interval){
+        // save the current trapframe bf overwriting
+        p->tpcopy = *(p->trapframe);
 
+        // put the handler func into the program counter
+        // user will exec this func after returning
+        p->trapframe->epc = p->alarm_handler;
+      }
+    }
+    yield();
+  }
   usertrapret();
 }
 

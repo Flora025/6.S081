@@ -1,0 +1,6 @@
+1. usually a0, a1..a7; a2
+2. maybe btw 24-26. we have the calculated value 12.
+3. 0x0 + 1936 = 0x790?
+
+5. HE110 World
+6. This is the value stored in a1.
