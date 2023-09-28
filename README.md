@@ -10,6 +10,8 @@ Each lab has its own branch in the repo. Labs completed so far:
 
 - [🔗Lab Page tables](https://github.com/Flora025/6.S081/tree/pgtbl)
 
+- [🔗Lab Traps](https://github.com/Flora025/6.S081/tree/traps)
+
 ## Weekly Roadmap
 
 Prep -> Lec video&slides -> Lab
@@ -31,13 +33,18 @@ tdb
 
 - [x] 【0920+】prep3, lec4+5+6, lab pgtbl
 
+- [x] 【0928】preps, lec 7, lab traps
+
 ### W4
 
 Prep:
 
 - riscv calling convention
-- 
-- lec5&6
+- lec5&6&7
+
+Lab traps:
+
+- see [lab traps notes](https://github.com/Flora025/6.S081/blob/main/notes/lab4-traps.md)
 
 ### W3
 
