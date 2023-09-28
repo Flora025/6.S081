@@ -14,7 +14,9 @@ Each lab has its own branch in the repo. Labs completed so far:
 
 Prep -> Lec video&slides -> Lab
 
+## Suggested prerequisite
 
+tdb
 
 ## Progress
 
@@ -28,6 +30,14 @@ Prep -> Lec video&slides -> Lab
 - [x] 【0917】lab syscall
 
 - [x] 【0920+】prep3, lec4+5+6, lab pgtbl
+
+### W4
+
+Prep:
+
+- riscv calling convention
+- 
+- lec5&6
 
 ### W3
 
@@ -105,7 +115,7 @@ Lab Util:
 - Reminder: dont forger to add command to `UPROGS` in Makefile
 - Error fix:
   - [Mac M1] `make grade` reports `env: python: No such file or directory`. Solution: `ln -s $(which python3) /usr/local/bin/python`
-  - 在user/sh.c的runcmd函数前添加`__attribute__((noreturn))`
+  - 对于每个branch，需要在user/sh.c的runcmd函数前添加`__attribute__((noreturn))`，不然xv6启动会报错
 
 ## Other Notes
 

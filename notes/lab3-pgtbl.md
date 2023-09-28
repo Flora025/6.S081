@@ -439,9 +439,9 @@ tesk全部ok
 
 然后简单分析一下task：
 
-原先由于global kernel pt里没有记录每个进程的用户地址空间的mapping，所以copyin在接受user的虚拟地址后，需要「在软件中`walk`页表把虚拟地址转换成物理」，然后才能从物理地址拷贝指定大小的内存到目标位置。
+原先由于global kernel pt里没有记录每个进程的用户地址空间的mapping，所以copyin在接受user的虚拟地址后，需要在软件中`walk`页表把虚拟地址转换成物理，然后才能从物理地址拷贝指定大小的内存到目标位置。
 
-现在我们每个进程都有自己的`kpagetable`，所以只要把用户地址空间的mapping也记录进来，就完全可以避免walk的步骤。为此，只需要把进程用户地址空间里的映射记录到这个`kpagetable`里。
+现在我们每个进程都有自己的`kpagetable`，所以只要把用户地址空间的mapping也记录进来就能一定程度上简化步骤。为此需要把进程用户地址空间里的pte拷贝到`kpagetable`里。
 
 为什么可以记录进来？这和user space和kernel space的分布有关。kernel启动后的最低地址在PLIC（`0xC000000`），而user是从0开始的，它们的虚拟地址范围不重合，所以可以直接把user space的mapping直接加到（kernel自己不用的）kernel space里。
 
