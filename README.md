@@ -4,15 +4,16 @@
 
 Each lab has its own branch in the repo. Labs completed so far: 
 
-- [🔗Lab Util](https://github.com/Flora025/6.S081/tree/util)
+- Repo: [🔗Lab Util](https://github.com/Flora025/6.S081/tree/util)
 
-- [🔗Lab Syscall](https://github.com/Flora025/6.S081/tree/syscall)
+- Repo: [🔗Lab Syscall](https://github.com/Flora025/6.S081/tree/syscall)
 
-- [🔗Lab Page tables](https://github.com/Flora025/6.S081/tree/pgtbl)
+- Repo: [🔗Lab Page tables](https://github.com/Flora025/6.S081/tree/pgtbl)                    [📒Lab Notes](https://github.com/Flora025/6.S081/blob/main/notes/lab3-pgtbl.md)
 
-- [🔗Lab Traps](https://github.com/Flora025/6.S081/tree/traps)
+- Repo: [🔗Lab Traps](https://github.com/Flora025/6.S081/tree/traps)                               [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab4-traps.md)
 
-- [🔗Lab Lazy page allocation](https://github.com/Flora025/6.S081/tree/lazy)
+- Repo: [🔗Lab Lazy page allocation](https://github.com/Flora025/6.S081/tree/lazy)     [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab5-lazy.md)
+
 
 ## Weekly Roadmap
 
