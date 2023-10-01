@@ -12,6 +12,8 @@ Each lab has its own branch in the repo. Labs completed so far:
 
 - [🔗Lab Traps](https://github.com/Flora025/6.S081/tree/traps)
 
+- [🔗Lab Lazy page allocation](https://github.com/Flora025/6.S081/tree/lazy)
+
 ## Weekly Roadmap
 
 Prep -> Lec video&slides -> Lab
@@ -26,14 +28,22 @@ tdb
 - [x] 【0821】reading1+lec1
 - [x] 【0824】lab util
 - [x] 【0912】prep2, lec2(slidesOnly)
-
 - [x] 【0915】review concepts+labUtil, lec 3 prep + live
-
 - [x] 【0917】lab syscall
-
 - [x] 【0920+】prep3, lec4+5+6, lab pgtbl
+- [x] 【0928】preps, lec 7+8, lab traps
+- [x] 【0930】preps, lec 9, lab lazy
 
-- [x] 【0928】preps, lec 7, lab traps
+### W5
+
+Prep:
+
+- chapter 4.6
+- code pieces (trap.c, uart.c, plic.c, console.c)
+
+Lab lazy alloc:
+
+- see [lab lazy notes](https://github.com/Flora025/6.S081/blob/main/notes/lab5-lazy.md)
 
 ### W4
 
