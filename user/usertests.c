@@ -2216,7 +2216,7 @@ sbrkfail(char *s)
     exit(1);
 }
 
-  
+
 // test reads/writes from/to allocated memory
 void
 sbrkarg(char *s)

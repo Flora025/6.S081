@@ -5,6 +5,8 @@
 #include "riscv.h"
 #include "defs.h"
 #include "fs.h"
+#include  "spinlock.h"
+#include  "proc.h"
 
 /*
  * the kernel's page table.
@@ -101,10 +103,15 @@ walkaddr(pagetable_t pagetable, uint64 va)
     return 0;
 
   pte = walk(pagetable, va, 0);
-  if(pte == 0)
-    return 0;
-  if((*pte & PTE_V) == 0)
-    return 0;
+  if(pte == 0 || (*pte & PTE_V) == 0) {
+    // make sure the va is ACTUALLY valid
+    if (va >= PGROUNDUP(myproc()->trapframe->sp) && va < myproc()->sz) {
+      // lazy alloc and walk again
+      lazyalloc(va);
+    } else {
+      return 0;
+    }
+  }
   if((*pte & PTE_U) == 0)
     return 0;
   pa = PTE2PA(*pte);
@@ -181,7 +188,8 @@ uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
 
   for(a = va; a < va + npages*PGSIZE; a += PGSIZE){
     if((pte = walk(pagetable, a, 0)) == 0)
-      panic("uvmunmap: walk");
+      continue;
+      // panic("uvmunmap: walk");
     if((*pte & PTE_V) == 0)
       continue; // normal for pagefault
     if(PTE_FLAGS(*pte) == PTE_V)
@@ -223,6 +231,27 @@ uvminit(pagetable_t pagetable, uchar *src, uint sz)
   memmove(mem, src, sz);
 }
 
+// on-demand mem alloc
+// returns 0 if successful
+uint64
+lazyalloc(uint64 va)
+{
+  uint64 pgaddr = PGROUNDDOWN(va);
+  // alloc memory
+  char *mem = kalloc();
+  if(mem == 0){
+    myproc()->killed = 1;
+    // printf("usertrap: failed to alloc mem\n");
+  } else {
+    memset(mem, 0, PGSIZE);
+    if(mappages(myproc()->pagetable, pgaddr, PGSIZE, (uint64)mem, PTE_W|PTE_X|PTE_R|PTE_U) != 0){
+      kfree(mem);
+      myproc()->killed = 1;
+      printf("usertrap: failed to mappages\n");
+    }
+  }
+  return 0;
+}
 // Allocate PTEs and physical memory to grow process from oldsz to
 // newsz, which need not be page aligned.  Returns new size or 0 on error.
 uint64
@@ -315,9 +344,11 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
 
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walk(old, i, 0)) == 0)
-      panic("uvmcopy: pte should exist");
+      continue;
+      // panic("uvmcopy: pte should exist");
     if((*pte & PTE_V) == 0)
-      panic("uvmcopy: page not present");
+      // panic("uvmcopy: page not present");
+      continue;
     pa = PTE2PA(*pte);
     flags = PTE_FLAGS(*pte);
     if((mem = kalloc()) == 0)
