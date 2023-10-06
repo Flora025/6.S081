@@ -4,6 +4,7 @@
         "typeinfo": "c",
         "param.h": "c",
         "types.h": "c",
-        "memlayout.h": "c"
+        "memlayout.h": "c",
+        "defs.h": "c"
     }
 }
