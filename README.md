@@ -34,6 +34,9 @@ tdb
 - [x] 【0920+】prep3, lec4+5+6, lab pgtbl
 - [x] 【0928】preps, lec 7+8, lab traps
 - [x] 【0930】preps, lec 9, lab lazy
+- [x] 【1003】prep (ch6 & code), lec 10,
+- [ ] 【1005】lab cow, prep11, lec 11, lab thread
+- [ ] 【】lab thread
 
 ### W5
 
