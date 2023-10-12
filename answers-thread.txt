@@ -1,0 +1,2 @@
+When two insert()s have the same hash code, there might be
+a loss of one of them.
