@@ -377,7 +377,7 @@ iunlockput(struct inode *ip)
 static uint
 bmap(struct inode *ip, uint bn)
 {
-  uint addr, *a;
+  uint addr, *a, *a1;
   struct buf *bp;
 
   if(bn < NDIRECT){
@@ -387,10 +387,15 @@ bmap(struct inode *ip, uint bn)
   }
   bn -= NDIRECT;
 
+  // if (bn >= 250) printf("bn: %d\n", bn);
+  // 至此 bn=blocknumber=singly block中的计数 [0, 255]
+
   if(bn < NINDIRECT){
     // Load indirect block, allocating if necessary.
+    // 给singly indirect block分配内存
     if((addr = ip->addrs[NDIRECT]) == 0)
       ip->addrs[NDIRECT] = addr = balloc(ip->dev);
+    
     bp = bread(ip->dev, addr);
     a = (uint*)bp->data;
     if((addr = a[bn]) == 0){
@@ -400,7 +405,40 @@ bmap(struct inode *ip, uint bn)
     brelse(bp);
     return addr;
   }
+  bn -= NINDIRECT;
 
+  // printf("bn: %d\n", bn);
+  // 至此 bn = doubly block中的计数 [0,65535]
+
+  if(bn < NDOUBLE){
+    // n1 = bn / NINDIRECT, n2 = bn % NINDIRECT
+    // Load 1st layer of doubly indirect block, allocating if necessary.
+    if((addr = ip->addrs[NDIRECT + 1]) == 0)
+      ip->addrs[NDIRECT + 1] = addr = balloc(ip->dev);
+
+    // [] Load 2nd layer of doubly indirect block. allocate if necessary
+    bp = bread(ip->dev, addr);
+    a = (uint*)bp->data;
+    if((addr = a[bn / NINDIRECT]) == 0){
+      a[bn / NINDIRECT] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+
+    brelse(bp);
+
+    // use block
+    bp = bread(ip->dev, addr);
+    a1 = (uint*)bp->data;
+    if((addr = a1[bn % NINDIRECT]) == 0){
+      a1[bn % NINDIRECT] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+
+    brelse(bp);
+
+    return addr;
+  }
+  
   panic("bmap: out of range");
 }
 
@@ -409,9 +447,9 @@ bmap(struct inode *ip, uint bn)
 void
 itrunc(struct inode *ip)
 {
-  int i, j;
-  struct buf *bp;
-  uint *a;
+  int i, j, k;
+  struct buf *bp, *bp2;
+  uint *a, *a1;
 
   for(i = 0; i < NDIRECT; i++){
     if(ip->addrs[i]){
@@ -421,8 +459,11 @@ itrunc(struct inode *ip)
   }
 
   if(ip->addrs[NDIRECT]){
+    // the bp of 256 blocks
     bp = bread(ip->dev, ip->addrs[NDIRECT]);
+    // blocks addr arr
     a = (uint*)bp->data;
+    // free every block in a
     for(j = 0; j < NINDIRECT; j++){
       if(a[j])
         bfree(ip->dev, a[j]);
@@ -430,6 +471,33 @@ itrunc(struct inode *ip)
     brelse(bp);
     bfree(ip->dev, ip->addrs[NDIRECT]);
     ip->addrs[NDIRECT] = 0;
+  }
+
+  if(ip->addrs[NDIRECT + 1]){
+    // the bp of 256 blocks
+    bp = bread(ip->dev, ip->addrs[NDIRECT + 1]);
+    // 1st addr arr
+    a = (uint*)bp->data;
+    // rls every blocks in every arr in a
+    for(j = 0; j < NINDIRECT; j++){
+      if(a[j]) {
+        // bp2必须和bp区分开 否则会造成提前释放lock的问题
+        bp2 = bread(ip->dev, a[j]); 
+        a1 = (uint*)bp2->data;
+        for (k = 0; k < NINDIRECT; k++){
+          if (a1[k])
+            bfree(ip->dev, a1[k]);
+        }
+        brelse(bp2);
+        bfree(ip->dev, a[j]);
+        a[j] = 0;
+      }
+    }
+
+    brelse(bp);
+
+    bfree(ip->dev, ip->addrs[NDIRECT + 1]);
+    ip->addrs[NDIRECT + 1] = 0;
   }
 
   ip->size = 0;
