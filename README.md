@@ -8,15 +8,19 @@ Each lab has its own branch in the repo. Labs completed so far:
 
 - Repo: [🔗Lab Syscall](https://github.com/Flora025/6.S081/tree/syscall)
 
-- Repo: [🔗Lab Page tables](https://github.com/Flora025/6.S081/tree/pgtbl)                    [📒Lab Notes](https://github.com/Flora025/6.S081/blob/main/notes/lab3-pgtbl.md)
+- Repo: [🔗Lab Page tables](https://github.com/Flora025/6.S081/tree/pgtbl)&#09;&#09;  [📒Lab Notes](https://github.com/Flora025/6.S081/blob/main/notes/lab3-pgtbl.md)
 
-- Repo: [🔗Lab Traps](https://github.com/Flora025/6.S081/tree/traps)                               [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab4-traps.md)
+- Repo: [🔗Lab Traps](https://github.com/Flora025/6.S081/tree/traps)  &#09;&#09; [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab4-traps.md)
 
-- Repo: [🔗Lab Lazy page allocation](https://github.com/Flora025/6.S081/tree/lazy)     [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab5-lazy.md)
+- Repo: [🔗Lab Lazy page allocation](https://github.com/Flora025/6.S081/tree/lazy)  &#09;&#09;   [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab5-lazy.md)
 
-- Repo: [🔗Lab Cow](https://github.com/Flora025/6.S081/tree/cow)
+- Repo: [🔗Lab Cow](https://github.com/Flora025/6.S081/tree/cow)       &#09;&#09;  [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab6-cow.md)
 
-- Repo: [🔗Lab Thread](https://github.com/Flora025/6.S081/tree/thread)
+- Repo: [🔗Lab Thread](https://github.com/Flora025/6.S081/tree/thread)    &#09;&#09;              [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab7-thread.md)
+
+- Repo: [🔗Lab Lock](https://github.com/Flora025/6.S081/tree/lock)       &#09;&#09;        [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab8-lock.md)
+
+- Repo: [🔗Lab File System](https://github.com/Flora025/6.S081/tree/fs) &#09;&#09;   [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab9-fs.md)
 
 
 ## Weekly Roadmap
@@ -41,6 +45,20 @@ tdb
 - [x] 【1003】prep (ch6 & code), lec 10,
 - [x] 【1005】lab cow, prep11, lec 11, lab thread
 - [x] 【1011】prep, lab lock
+- [x] 【1013】prep fs, lec 14 & lec 15
+- [x] 【~1028】prep, lec 16, lab fs
+- [ ] 【】
+
+### W7
+
+Prep
+
+- chap 8
+- code
+
+lab fs:
+
+- see notes
 
 ### W6
 
@@ -99,29 +117,10 @@ Prep：
 
 Lab syscall:
 
-- 一开始想复杂了
-- 实际上实现trace要做的只是：
+- 一开始想复杂了 实际上实现trace要做的只是：
   - 给每个process打上"标签" ==> 
   - 并把这个标签传递给子进程 ==>  
   - 最后在syscall()时根据标签判断是否需要print trace
-
-```c
-// 【思考过程】
-// 最终的效果是：在trace PROC后，如果PROC调用了一个syscall，它和它的child process都会print出要求的trace info
-
-// Usage: trace N ARGV
-// 1. add the mask to the proc structure & save the user program
-
-// 2. fork出一个子进程然后exec the USERP
-// 记得把mask传给它 （在proc.c里可以加个copy p->tracemask)
-// DONE: add a new variable in proc.h proc structure
-
-// 获得user args, see syscall.c
-// - 用argaddr(int n, uint64 *ip)获取
-
-// 3. 这个syscall（不出意外）会fork子进程来进行别的syscall
-// if (p->tracemask > 0): 按照tracemask print需要trace的东西
-```
 
 - 实现syscall：
   - 【准备】完成各种文件里的函数/变量申明

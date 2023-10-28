@@ -1,6 +1,6 @@
 # Lab 7 thread 实验记录
 
-
+lab completed, notes wip
 
 ## 7.1 Uthread: switching between threads
 

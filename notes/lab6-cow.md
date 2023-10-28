@@ -1,5 +1,7 @@
 # Lab 6 COW 实验记录
 
+lab completed, notes wip
+
 Lab copy-on-write fork要求:
 
 ## 6.1 Implement copy-on write
