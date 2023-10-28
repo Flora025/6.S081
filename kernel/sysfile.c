@@ -122,29 +122,37 @@ sys_link(void)
   char name[DIRSIZ], new[MAXPATH], old[MAXPATH];
   struct inode *dp, *ip;
 
+  // load args
   if(argstr(0, old, MAXPATH) < 0 || argstr(1, new, MAXPATH) < 0)
     return -1;
 
   begin_op();
+  // get the inode that OLD refers to
   if((ip = namei(old)) == 0){
     end_op();
     return -1;
   }
 
   ilock(ip);
+  // skip if the inode refers to a directory
   if(ip->type == T_DIR){
     iunlockput(ip);
     end_op();
     return -1;
   }
 
+  // add inode's refcount and update
   ip->nlink++;
   iupdate(ip);
   iunlock(ip);
 
+  // get directory inode that NEW refers to 同时把路径名的final
+  // el存进name 返回new directory pointer
   if((dp = nameiparent(new, name)) == 0)
     goto bad;
   ilock(dp);
+  // 把名字为以上NAME的inode存入directory
+  // (new dir, new filename, old inode num)
   if(dp->dev != ip->dev || dirlink(dp, name, ip->inum) < 0){
     iunlockput(dp);
     goto bad;
@@ -283,6 +291,41 @@ create(char *path, short type, short major, short minor)
   return ip;
 }
 
+struct inode*
+getirec(struct inode *ip) {
+  uint inums[10];
+  int i, j;
+  char target[MAXPATH];
+
+  for(i = 0; i < 10; ++i) {
+    inums[i] = ip->inum;
+    // read the target path from symlink file
+    if(readi(ip, 0, (uint64)target, 0, MAXPATH) <= 0) {
+      iunlockput(ip);
+      return 0;
+    }
+    iunlockput(ip);
+    
+    // get the inode of target path 
+    if((ip = namei(target)) == 0) {
+      return 0;
+    }
+    for(j = 0; j <= i; ++j) {
+      if(ip->inum == inums[j]) {
+        return 0;
+      }
+    }
+    ilock(ip);
+    if(ip->type != T_SYMLINK) {
+      return ip;
+    }
+  }
+
+  iunlockput(ip);
+  return 0;
+}
+
+
 uint64
 sys_open(void)
 {
@@ -321,6 +364,15 @@ sys_open(void)
     end_op();
     return -1;
   }
+  // if inode is a symnode
+  if (ip->type == T_SYMLINK && (omode & O_NOFOLLOW) == 0) {
+    // if symnode not marked NOFOLLOW, read recursively
+      if ((ip = getirec(ip)) == 0) {
+        end_op();
+        return -1;
+      }
+
+  }
 
   if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
     if(f)
@@ -344,6 +396,7 @@ sys_open(void)
   if((omode & O_TRUNC) && ip->type == T_FILE){
     itrunc(ip);
   }
+
 
   iunlock(ip);
   end_op();
@@ -485,8 +538,40 @@ sys_pipe(void)
   return 0;
 }
 
+
 uint64
 sys_symlink(void)
 {
+  // symlink("/testsymlink/b", "/testsymlink/a");
+  // arg0 target pathname
+  // arg1 path pathname
+
+  char source[MAXPATH], target[MAXPATH];
+  struct inode *sip;
+  int len;
+
+  // load args
+  if((len = argstr(0, target, MAXPATH)) < 0 || argstr(1, source, MAXPATH) < 0)
+    return -1;
+
+  begin_op();
+  // create a symnode to store target
+  sip = create(source, T_SYMLINK, 0, 0);
+  if(sip == 0){
+    end_op();
+    return -1;
+  }
+
+  // ilock(sip); deadlock create里已经lock了
+  // write the target path to symnode
+  if (writei(sip, 0, (uint64)target, 0, len) != len) {
+    iunlockput(sip);
+    end_op();
+    return -1;
+  }
+  iunlockput(sip);
+
+  end_op();
+
   return 0;
 }

@@ -633,6 +633,7 @@ dirlink(struct inode *dp, char *name, uint inum)
     iput(ip);
     return -1;
   }
+  // printf("dirlink: %s\n", name);
 
   // Look for an empty dirent.
   for(off = 0; off < dp->size; off += sizeof(de)){
@@ -725,6 +726,8 @@ namex(char *path, int nameiparent, char *name)
     iput(ip);
     return 0;
   }
+  // printf("namex: %p\n", ip);
+  // printf("namex: %s\n", name);
   return ip;
 }
 
