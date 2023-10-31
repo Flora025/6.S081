@@ -1,4 +1,4 @@
-# Lab 3 pgtbl 实验记录
+# Lab 4 traps 实验记录
 
 课上的截图，对理解trap很有帮助：high-level picture of the procedure of switching from user mode to supervisor mode
 
