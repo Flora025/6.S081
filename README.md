@@ -2,25 +2,20 @@
 
 ## SP Notes
 
-Each lab has its own branch in the repo. Labs completed so far: 
+Each lab has its own branch in the repository. Labs completed so far: 
 
-- Repo: [🔗Lab Util](https://github.com/Flora025/6.S081/tree/util)
-
-- Repo: [🔗Lab Syscall](https://github.com/Flora025/6.S081/tree/syscall)
-
-- Repo: [🔗Lab Page tables](https://github.com/Flora025/6.S081/tree/pgtbl)&#09;&#09;  [📒Lab Notes](https://github.com/Flora025/6.S081/blob/main/notes/lab3-pgtbl.md)
-
-- Repo: [🔗Lab Traps](https://github.com/Flora025/6.S081/tree/traps)  &#09;&#09; [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab4-traps.md)
-
-- Repo: [🔗Lab Lazy page allocation](https://github.com/Flora025/6.S081/tree/lazy)  &#09;&#09;   [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab5-lazy.md)
-
-- Repo: [🔗Lab Cow](https://github.com/Flora025/6.S081/tree/cow)       &#09;&#09;  [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab6-cow.md)
-
-- Repo: [🔗Lab Thread](https://github.com/Flora025/6.S081/tree/thread)    &#09;&#09;              [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab7-thread.md)
-
-- Repo: [🔗Lab Lock](https://github.com/Flora025/6.S081/tree/lock)       &#09;&#09;        [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab8-lock.md)
-
-- Repo: [🔗Lab File System](https://github.com/Flora025/6.S081/tree/fs) &#09;&#09;   [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab9-fs.md)
+| Repo Branches                                                | Lab Notes (some WIP)                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [🔗Lab Util](https://github.com/Flora025/6.S081/tree/util)    |                                                              |
+| [🔗Lab Syscall](https://github.com/Flora025/6.S081/tree/syscall) |                                                              |
+| [🔗Lab Page tables](https://github.com/Flora025/6.S081/tree/pgtbl) | [📒【fin】Lab Notes](https://github.com/Flora025/6.S081/blob/main/notes/lab3-pgtbl.md) |
+| [🔗Lab Traps](https://github.com/Flora025/6.S081/tree/traps)  | [📒【fin】Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab4-traps.md) |
+| [🔗Lab Lazy page allocation](https://github.com/Flora025/6.S081/tree/lazy) | [📒【fin】Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab5-lazy.md) |
+| [🔗Lab Cow](https://github.com/Flora025/6.S081/tree/cow)      | [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab6-cow.md) |
+| [🔗Lab Thread](https://github.com/Flora025/6.S081/tree/thread) | [📒【fin】Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab7-thread.md) |
+| [🔗Lab Lock](https://github.com/Flora025/6.S081/tree/lock)    | [📒Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab8-lock.md) |
+| [🔗Lab File System](https://github.com/Flora025/6.S081/tree/fs) | [📒【fin】Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab9-fs.md) |
+| [🔗Lab Networking](https://github.com/Flora025/6.S081/tree/net) | [📒【fin】Lab notes](https://github.com/Flora025/6.S081/blob/main/notes/lab11-net.md) |
 
 
 ## Weekly Roadmap
@@ -29,9 +24,11 @@ Prep -> Lec video&slides -> Lab
 
 ## Suggested prerequisite
 
-tdb
+in retrospect, seems that simply taking all the pre-lecture readings seriouly will do (even for os new comers)
 
 ## Progress
+
+Completed whitin 3 months (part-time).
 
 - [x] 【0820】init repo && materials && setup
 - [x] 【0821】reading1+lec1
@@ -48,6 +45,7 @@ tdb
 - [x] 【1013】prep fs, lec 14 & lec 15
 - [x] 【~1028】prep, lec 16, lab fs
 - [x] 【1030】prep, lec 17, 18
+- [x] 【1031】lab networking, lec 19, lec 20, FIN!
 
 ### W7
 
