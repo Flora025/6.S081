@@ -97,24 +97,85 @@ e1000_transmit(struct mbuf *m)
 {
   //
   // Your code here.
-  //
+  uint32 end;
+  struct tx_desc *desc;
+
+  acquire(&e1000_lock);
+  end = regs[E1000_TDT]; // cur end id
+  desc = &tx_ring[end]; // cur pos in ring
+  
+  // printf("tx ring:%p\n", end);
+  // printf("ring desc:%p\n", desc);
+
+  // check overflow
+  if (!desc->status & E1000_TXD_STAT_DD) {
+    release(&e1000_lock);
+    return -1;
+  }
+
+  // use mbuffree() to free the last mbuf
+  if (tx_mbufs[end]) {
+    mbuffree(tx_mbufs[end]);
+  }
+
+  // fill in the descriptor
   // the mbuf contains an ethernet frame; program it into
   // the TX descriptor ring so that the e1000 sends it. Stash
   // a pointer so that it can be freed after sending.
   //
-  
+  desc->addr = (uint64) m->head;
+  tx_mbufs[end] = m;
+  desc->length = m->len;
+  desc->cmd = E1000_TXD_CMD_EOP | E1000_TXD_CMD_RS;
+
+  // update the ring position
+  regs[E1000_TDT] = (end + 1) % TX_RING_SIZE;
+  release(&e1000_lock);
+
   return 0;
 }
+
 
 static void
 e1000_recv(void)
 {
-  //
-  // Your code here.
+  // ask the E1000 for the ring index
+  int end = (regs[E1000_RDT] + 1) % RX_RING_SIZE;
+  // get the next waiting received packet
+  struct rx_desc *desc = &rx_ring[end];
+
+  // check if a new packet is available
+  while ((desc->status & E1000_RXD_STAT_DD)) {
+    if(desc->length > MBUF_SIZE) {
+      panic("e1000_resv");
+    }
+
+    // update the length reported in the descriptor
+    rx_mbufs[end]->len = desc->length;
+
+    // deliver the mbuf to the network stack
+    net_rx(rx_mbufs[end]);     
+
+    // allocate a new mbuf replace the one given to net_rx()
+    rx_mbufs[end] = mbufalloc(0);
+    if (!rx_mbufs[end]) {
+      panic("e1000_resv");
+    }
+
+    // update descriptor and status
+    desc->addr = (uint64) rx_mbufs[end]->head;
+    desc->status = 0;
+    
+    end = (end + 1) % RX_RING_SIZE; // mod if exceeding ring size
+    desc = &rx_ring[end];
+  }
+
+  regs[E1000_RDT] = (end - 1) % RX_RING_SIZE;
   //
   // Check for packets that have arrived from the e1000
   // Create and deliver an mbuf for each packet (using net_rx()).
   //
+  
 }
 
 void
@@ -127,3 +188,4 @@ e1000_intr(void)
 
   e1000_recv();
 }
+
