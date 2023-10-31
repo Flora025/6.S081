@@ -47,7 +47,7 @@ tdb
 - [x] 【1011】prep, lab lock
 - [x] 【1013】prep fs, lec 14 & lec 15
 - [x] 【~1028】prep, lec 16, lab fs
-- [ ] 【】
+- [x] 【1030】prep, lec 17, 18
 
 ### W7
 
